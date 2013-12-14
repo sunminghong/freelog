@@ -84,11 +84,8 @@ func (this *baseLog) AddLogger(
 
 func (this *baseLog) WriteLog(t *time.Time, level int, msg []byte) {
     if this.lowestLevel > level {
-        fmt.Println("level---",level,this.lowestLevel)
         return
     }
-
-    fmt.Println("level",level,this.lowestLevel,string(msg))
 
     logmsg := new(LogMsg)
     logmsg.Timestamp = t
@@ -109,9 +106,8 @@ func (this *baseLog) runLog() {
     for {
         select {
         case logmsg := <-this.msgChannel:
-            fmt.Println("logger outer:",logmsg )
-            for i, logger := range this.registeredLoggers {
-                fmt.Println("logger outer:", i,logmsg.Level,string(logmsg.Msg))
+            for _, logger := range this.registeredLoggers {
+                //fmt.Println("logger outer:", i,logmsg.Level,string(logmsg.Msg))
                 logger.Write(logmsg)
             }
         }
