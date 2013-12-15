@@ -20,7 +20,8 @@ type GetAdapter func() ILogger
 var registeredAdapters map[string]GetAdapter
 
 
-type ILog interface {
+
+type IOutput interface {
 	Init(channelLength int64,reader IConfigReader)
 	AddLogger(name string, reader IConfigReader) error
     WriteLog(t *time.Time, level int, msg []byte)

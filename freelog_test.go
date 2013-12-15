@@ -15,6 +15,7 @@ import (
     "testing"
     "time"
     "fmt"
+    "runtime"
 )
 
 func Test_test(t *testing.T) {
@@ -34,16 +35,22 @@ filesize = 20
 
     `)
 
-	logger = &baseLog{}
+	output = &freeOutput{}
 
 	reader := &iniReader{}
 	if err := reader.InitBytes(inifile); err != nil {
-		panic(fmt.Sprintf("logger config reader init error: %q", err))
+		panic(fmt.Sprintf("output config reader init error: %q", err))
 	}
 
-	logger.Init(1000, reader)
+	output.Init(1000, reader)
 
-    for i := 0;i< 10000;i ++ {
+    flag := Ldefault
+    Std = NewLoggerext(output,"", flag)
+
+
+//////////////////////////////////////////////////////////////////////////
+
+    for i := 0;i< 10;i ++ {
         log(levelFatal,[]byte(fmt.Sprintf("%d",i)))
         log(levelTrace,[]byte("Trace\n"))
         log(levelDebug,[]byte("Debug\n"))
@@ -54,9 +61,46 @@ filesize = 20
         log(levelFatal,[]byte("Fatal\n"))
     }
     time.Sleep(1 * time.Second)
+
+    for i :=0;i<3;i++ {
+        pc, file, line, ok := runtime.Caller(i)
+        if ok {
+            fmt.Println(pc)  
+            fmt.Println(file)  
+            fmt.Println(line)  
+            fmt.Println(ok)  
+            f := runtime.FuncForPC(pc)  
+            fmt.Println(f.Name())  
+        }
+    }
+    fmt.Println("------------------------------------")
+
+
+    s := "\n"
+	buf := make([]byte, 1024 * 1024)
+	n := runtime.Stack(buf, true)
+	s += string(buf[:n])
+	s += "\n"
+	fmt.Println(s)
+
+
+    for i := 0;i< 10;i ++ {
+        Fatal(fmt.Sprintf("%d",i))
+        Trace("Trace\n")
+        Debug("Debug\n")
+        Info("Info\n")
+        Warn("Warn\n")
+        Error("Error\n")
+        Panic("Panic\n")
+        Fatal("Fatal\n")
+    }
+    time.Sleep(1 * time.Second)
+
+
+
 }
 
 func log(level int,msg []byte) {
     t := time.Now()
-    logger.WriteLog(&t,level,msg)
+    output.WriteLog(&t,level,msg)
 }

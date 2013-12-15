@@ -7,7 +7,8 @@
 =============================================================================*/
 
 /*
-一个通用的、多输出、多级别的go 日志库，并且每个输出可以分别定义级别；可以方便自定义输出类
+一个通用的、多输出、多级别的go 日志库，并且每个输出可以分别定义级别；
+可以方便自定义输出类
 */
 package freelog
 
@@ -17,14 +18,14 @@ import (
     "time"
 )
 
-type baseLog struct {
+type freeOutput struct {
     registeredLoggers map[string]ILogger
     lowestLevel       int
     msgChannel        chan *LogMsg
     lock              sync.Mutex
 }
 
-func (this *baseLog) Init(channelLength int64, configReader IConfigReader) {
+func (this *freeOutput) Init(channelLength int64, configReader IConfigReader) {
     this.registeredLoggers = make(map[string]ILogger)
     this.msgChannel = make(chan *LogMsg, channelLength)
     this.lowestLevel = levelOff
@@ -34,7 +35,7 @@ func (this *baseLog) Init(channelLength int64, configReader IConfigReader) {
     go this.runLog()
 }
 
-func (this *baseLog) setLoggers(configReader IConfigReader) {
+func (this *freeOutput) setLoggers(configReader IConfigReader) {
     adps := configReader.GetAdapters()
     if adps == nil {
         panic("logger config reader error!")
@@ -51,7 +52,7 @@ func (this *baseLog) setLoggers(configReader IConfigReader) {
     return
 }
 
-func (this *baseLog) AddLogger(
+func (this *freeOutput) AddLogger(
     adpName string, configReader IConfigReader) error {
 
     this.lock.Lock()
@@ -82,7 +83,7 @@ func (this *baseLog) AddLogger(
     return nil
 }
 
-func (this *baseLog) WriteLog(t *time.Time, level int, msg []byte) {
+func (this *freeOutput) WriteLog(t *time.Time, level int, msg []byte) {
     if this.lowestLevel > level {
         return
     }
@@ -96,13 +97,13 @@ func (this *baseLog) WriteLog(t *time.Time, level int, msg []byte) {
     return
 }
 
-func (this *baseLog) Close() {
+func (this *freeOutput) Close() {
     for _, logger := range this.registeredLoggers {
         logger.Close()
     }
 }
 
-func (this *baseLog) runLog() {
+func (this *freeOutput) runLog() {
     for {
         select {
         case logmsg := <-this.msgChannel:
