@@ -33,7 +33,8 @@ func Start(inifile *string) {
 
 	reader := &iniReader{}
 	if err := reader.Init(inifile); err != nil {
-		panic(fmt.Sprintf("writer config reader init error: %q", err))
+		fmt.Sprintf("writer config reader init error: %q", err)
+        return
 	}
 
 	writer.Init(1000, reader)

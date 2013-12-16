@@ -41,6 +41,10 @@ func (this *ConsoleAdapter) GetLevel() int {
     return this.level
 }
 
+func (this *ConsoleAdapter) SetLevel(level int) {
+    this.level = level
+}
+
 func (this *ConsoleAdapter) Init(ini IConfigReader) (level int, err error) {
     lev, err := ini.GetString(this.section, "level")
     if err != nil {

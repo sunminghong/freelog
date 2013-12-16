@@ -73,6 +73,10 @@ func (this *FileAdapter) GetLevel() (level int) {
     return this.level
 }
 
+func (this *FileAdapter) SetLevel(level int) {
+    this.level = level
+}
+
 func (this *FileAdapter) Init(ini IConfigReader) (level int, err error) {
 
     logfile, err := ini.GetString(AdapterFile, "filename")

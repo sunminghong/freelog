@@ -19,23 +19,23 @@ import (
 )
 
 type freeWriter struct {
-    registeredLoggers map[string]IAdapter
+    registeredAdapters map[string]IAdapter
     lowestLevel       int
     msgChannel        chan *LogMsg
     lock              sync.Mutex
 }
 
 func (this *freeWriter) Init(channelLength int64, configReader IConfigReader) {
-    this.registeredLoggers = make(map[string]IAdapter)
+    this.registeredAdapters = make(map[string]IAdapter)
     this.msgChannel = make(chan *LogMsg, channelLength)
     this.lowestLevel = levelOff
 
-    this.setLoggers(configReader)
+    this.setAdapters(configReader)
 
     go this.runLog()
 }
 
-func (this *freeWriter) setLoggers(configReader IConfigReader) {
+func (this *freeWriter) setAdapters(configReader IConfigReader) {
     adps := configReader.GetAdapters()
     if adps == nil {
         panic("logger config reader error!")
@@ -43,7 +43,7 @@ func (this *freeWriter) setLoggers(configReader IConfigReader) {
 
     for _, adp := range adps {
         if adp, err := CheckAdapter(adp); err == nil {
-            this.AddLogger(adp, configReader)
+            this.AddAdapter(adp, configReader)
         } else {
             fmt.Printf("日志适配器没有注册：%q \n", adp)
         }
@@ -52,7 +52,22 @@ func (this *freeWriter) setLoggers(configReader IConfigReader) {
     return
 }
 
-func (this *freeWriter) AddLogger(
+func (this *freeWriter) SetLevel(name string, level int) {
+    adp,ok := this.registeredAdapters[name]
+    if !ok {
+        return
+    }
+
+    adp.SetLevel(level)
+
+    for _,adp := range this.registeredAdapters {
+        if this.lowestLevel > adp.GetLevel() {
+            this.lowestLevel = level
+        }
+    }
+}
+
+func (this *freeWriter) AddAdapter(
     adpName string, configReader IConfigReader) error {
 
     this.lock.Lock()
@@ -74,7 +89,7 @@ func (this *freeWriter) AddLogger(
         return nil
     }
 
-    this.registeredLoggers[adpName] = logger
+    this.registeredAdapters[adpName] = logger
 
     if this.lowestLevel > level {
         this.lowestLevel = level
@@ -101,7 +116,7 @@ func (this *freeWriter) WriteLog(t *time.Time, level int, msg []byte) {
 }
 
 func (this *freeWriter) Close() {
-    for _, logger := range this.registeredLoggers {
+    for _, logger := range this.registeredAdapters {
         logger.Close()
     }
 }
@@ -110,8 +125,7 @@ func (this *freeWriter) runLog() {
     for {
         select {
         case logmsg := <-this.msgChannel:
-            for _, logger := range this.registeredLoggers {
-                //fmt.Println("logger outer:", i,logmsg.Level,string(logmsg.Msg))
+            for _, logger := range this.registeredAdapters {
                 logger.Write(logmsg)
             }
         }

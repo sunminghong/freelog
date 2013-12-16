@@ -27,13 +27,15 @@ type IConfigReader interface {
 
 type IWriter interface {
 	Init(channelLength int64,reader IConfigReader)
-	AddLogger(name string, reader IConfigReader) error
+	AddAdapter(name string, reader IConfigReader) error
+    SetLevel(name string,level int)
     WriteLog(t *time.Time, level int, msg []byte)
 }
 
 type IAdapter interface {
-    GetLevel() (level int)
     Init(config IConfigReader) (level int, err error)
+    GetLevel() (level int)
+    SetLevel(level int)
     Write(msg *LogMsg) (err error)
     Close()
 }
