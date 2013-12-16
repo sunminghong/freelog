@@ -26,11 +26,6 @@ const (
 	levelOff
 )
 
-const (
-	AdapterConsole = "consolelogger"
-	AdapterFile    = "filelogger"
-)
-
 func CheckAdapter(adaptername string) (string, error) {
 	switch strings.ToLower(adaptername) {
 	case AdapterConsole:

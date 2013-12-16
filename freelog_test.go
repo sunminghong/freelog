@@ -15,41 +15,39 @@ import (
     "testing"
     "time"
     "fmt"
-    "runtime"
+    //"runtime"
 )
 
 func Test_test(t *testing.T) {
     inifile := []byte(`
-
 [Default]
 flag = 30
 
-[ConsoleLogger]
-level = Debug
+[ConsoleAdapter]
+level = Trace
 
-
-[FileLogger]
-level = Warn 
+[FileAdapter]
+level = Info
 filename  = log%y%m%d-%h.log
 filesize = 20
-
     `)
 
-	output = &freeOutput{}
+	writer = &freeWriter{}
+    reader := &iniReader{}
+    if err := reader.InitBytes(inifile); err != nil {
+        panic(fmt.Sprintf("writer config reader init error: %q", err))
+    }
 
-	reader := &iniReader{}
-	if err := reader.InitBytes(inifile); err != nil {
-		panic(fmt.Sprintf("output config reader init error: %q", err))
-	}
+    writer.Init(1000, reader)
 
-	output.Init(1000, reader)
+    //writer = &wwriter{}
 
     flag := Ldefault
-    Std = NewLoggerext(output,"", flag)
+    Std = NewLoggerExt(writer,"", flag)
 
 
 //////////////////////////////////////////////////////////////////////////
-
+/*
     for i := 0;i< 10;i ++ {
         log(levelFatal,[]byte(fmt.Sprintf("%d",i)))
         log(levelTrace,[]byte("Trace\n"))
@@ -65,42 +63,57 @@ filesize = 20
     for i :=0;i<3;i++ {
         pc, file, line, ok := runtime.Caller(i)
         if ok {
-            fmt.Println(pc)  
-            fmt.Println(file)  
-            fmt.Println(line)  
-            fmt.Println(ok)  
-            f := runtime.FuncForPC(pc)  
-            fmt.Println(f.Name())  
+            fmt.Println(pc)
+            fmt.Println(file)
+            fmt.Println(line)
+            fmt.Println(ok)
+            f := runtime.FuncForPC(pc)
+            fmt.Println(f.Name())
         }
     }
+*/
+
     fmt.Println("------------------------------------")
-
-
+/*
     s := "\n"
 	buf := make([]byte, 1024 * 1024)
 	n := runtime.Stack(buf, true)
 	s += string(buf[:n])
 	s += "\n"
 	fmt.Println(s)
+*/
 
+    //Info("trace")
+    for i := 0;i < 1;i ++ {
+        //Fatal(fmt.Sprintf("%d",i))
+        Trace("Tra111ce")
+        Debug("Debug")
+        Info("33333333331234Ini看我忘了开始老地方会计师立刻就撒旦法雷克沙剪短发了卡斯就颠覆了萨科技的弗拉思考的房间撒了点付款就爱上浪费空间按时的弗兰克撒的发立刻就撒旦法了看见爱是飞；拉开始减肥；阿斯蒂芬fosdsdf22222222")
+        Warn("Wa111rn")
+        Error("Error")
 
-    for i := 0;i< 10;i ++ {
-        Fatal(fmt.Sprintf("%d",i))
-        Trace("Trace\n")
-        Debug("Debug\n")
-        Info("Info\n")
-        Warn("Warn\n")
-        Error("Error\n")
-        Panic("Panic\n")
-        Fatal("Fatal\n")
+        //Panic("Panic")
+        //Fatal("Fatal")
     }
     time.Sleep(1 * time.Second)
-
-
-
 }
 
 func log(level int,msg []byte) {
     t := time.Now()
-    output.WriteLog(&t,level,msg)
+    writer.WriteLog(&t,level,msg)
 }
+
+type wwriter struct { }
+
+func (self *wwriter) Init(channelLength int64,reader IConfigReader) {
+
+}
+
+func (self *wwriter) AddLogger(name string, reader IConfigReader) error {
+    return nil
+}
+
+func (self *wwriter) WriteLog(t *time.Time, level int, msg []byte) {
+    fmt.Print(string(msg))
+}
+

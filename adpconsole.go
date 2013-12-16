@@ -16,28 +16,32 @@ import (
     "fmt"
 )
 
-type ConsoleLogger struct {
+const (
+	AdapterConsole = "consoleadapter"
+)
+
+type ConsoleAdapter struct {
     level     int
 
     section string
 }
 
 func init() {
-    RegisterAdapter(AdapterConsole, NewConsoleLog)
+    RegisterAdapter(AdapterConsole, NewConsoleAdapter)
 }
 
-func NewConsoleLog() ILogger {
-    clog := new(ConsoleLogger)
+func NewConsoleAdapter() IAdapter {
+    clog := new(ConsoleAdapter)
     clog.section = AdapterConsole
     clog.level = levelWarn
     return clog
 }
 
-func (this *ConsoleLogger) GetLevel() int {
+func (this *ConsoleAdapter) GetLevel() int {
     return this.level
 }
 
-func (this *ConsoleLogger) Init(ini IConfigReader) (level int, err error) {
+func (this *ConsoleAdapter) Init(ini IConfigReader) (level int, err error) {
     lev, err := ini.GetString(this.section, "level")
     if err != nil {
         this.level = levelWarn
@@ -48,7 +52,7 @@ func (this *ConsoleLogger) Init(ini IConfigReader) (level int, err error) {
     return this.level, nil
 }
 
-func (this *ConsoleLogger) Write(msg *LogMsg) (err error) {
+func (this *ConsoleAdapter) Write(msg *LogMsg) (err error) {
     if this.level > msg.Level {
         return nil
     }
@@ -59,11 +63,11 @@ func (this *ConsoleLogger) Write(msg *LogMsg) (err error) {
 	//s += "\n"
     //fmt.Println(s)
 
-    fmt.Println(string(1) +string(msg.Msg))
+    fmt.Print(string(msg.Msg))
 
     return nil
 }
 
-func (this *ConsoleLogger) Close() {
+func (this *ConsoleAdapter) Close() {
 
 }

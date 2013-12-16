@@ -18,15 +18,15 @@ import (
     "time"
 )
 
-type freeOutput struct {
-    registeredLoggers map[string]ILogger
+type freeWriter struct {
+    registeredLoggers map[string]IAdapter
     lowestLevel       int
     msgChannel        chan *LogMsg
     lock              sync.Mutex
 }
 
-func (this *freeOutput) Init(channelLength int64, configReader IConfigReader) {
-    this.registeredLoggers = make(map[string]ILogger)
+func (this *freeWriter) Init(channelLength int64, configReader IConfigReader) {
+    this.registeredLoggers = make(map[string]IAdapter)
     this.msgChannel = make(chan *LogMsg, channelLength)
     this.lowestLevel = levelOff
 
@@ -35,7 +35,7 @@ func (this *freeOutput) Init(channelLength int64, configReader IConfigReader) {
     go this.runLog()
 }
 
-func (this *freeOutput) setLoggers(configReader IConfigReader) {
+func (this *freeWriter) setLoggers(configReader IConfigReader) {
     adps := configReader.GetAdapters()
     if adps == nil {
         panic("logger config reader error!")
@@ -52,7 +52,7 @@ func (this *freeOutput) setLoggers(configReader IConfigReader) {
     return
 }
 
-func (this *freeOutput) AddLogger(
+func (this *freeWriter) AddLogger(
     adpName string, configReader IConfigReader) error {
 
     this.lock.Lock()
@@ -83,27 +83,30 @@ func (this *freeOutput) AddLogger(
     return nil
 }
 
-func (this *freeOutput) WriteLog(t *time.Time, level int, msg []byte) {
+func (this *freeWriter) WriteLog(t *time.Time, level int, msg []byte) {
     if this.lowestLevel > level {
         return
     }
 
+    bufs := make([]byte, len(msg))
+    copy(bufs,msg)
+
     logmsg := new(LogMsg)
     logmsg.Timestamp = t
     logmsg.Level = level
-    logmsg.Msg = msg
+    logmsg.Msg = bufs
     this.msgChannel <- logmsg
 
     return
 }
 
-func (this *freeOutput) Close() {
+func (this *freeWriter) Close() {
     for _, logger := range this.registeredLoggers {
         logger.Close()
     }
 }
 
-func (this *freeOutput) runLog() {
+func (this *freeWriter) runLog() {
     for {
         select {
         case logmsg := <-this.msgChannel:

@@ -1,5 +1,5 @@
 /*=============================================================================
-#     FileName: output.go
+#     FileName: writer.go
 #       Author: sunminghong, allen.fantasy@gmail.com, http://weibo.com/5d13
 #         Team: http://1201.us
 #   LastChange: 2013-12-14 09:56:59
@@ -18,30 +18,30 @@ import (
     "runtime"
 )
 
-//default output variable
-var Std *Loggerext
-var output IOutput
+//default writer variable
+var Std *LoggerExt
+var writer IWriter
 
 func init() {
-	registeredAdapters = make(map[string]GetAdapter)
 
+    fmt.Println("logger ")
     //file := "./logconfig.ini"
 	//Reload(&file)
 }
 
 func Start(inifile *string) {
 
-	output = &freeOutput{}
+	writer = &freeWriter{}
 
 	reader := &iniReader{}
 	if err := reader.Init(inifile); err != nil {
-		panic(fmt.Sprintf("output config reader init error: %q", err))
+		panic(fmt.Sprintf("writer config reader init error: %q", err))
 	}
 
-	output.Init(1000, reader)
+	writer.Init(1000, reader)
 
     flag := Ldefault
-    Std = NewLoggerext(output,"", flag)
+    Std = NewLoggerExt(writer,"", flag)
 }
 
 func RegisterAdapter(adapterName string, adapter GetAdapter) {
@@ -59,19 +59,19 @@ func RegisterAdapter(adapterName string, adapter GetAdapter) {
 	}
 }
 
-// SetOutput sets the output destination for the standard output.
-func SetOutput(w iwriter) {
+// SetOutput sets the writer destination for the standard writer.
+func SetOutput(w IWriter) {
 	Std.mu.Lock()
 	defer Std.mu.Unlock()
 	Std.out = w
 }
 
-// Flags returns the output flags for the standard output.
+// Flags returns the writer flags for the standard writer.
 func Flags() int {
 	return Std.Flags()
 }
 
-// SetFlags sets the output flags for the standard output.
+// SetFlags sets the writer flags for the standard writer.
 func SetFlags(flag int) {
 	Std.SetFlags(flag)
 }
@@ -79,7 +79,7 @@ func SetFlags(flag int) {
 func sout(v ...interface{}) string {
     s,ok := v[0].(string)
     if !ok || strings.Index(s,"%") == -1 {
-        return fmt.Sprint(v)
+        return fmt.Sprint(v...)
     } else {
         return fmt.Sprintf(s,v[1:]...)
     }
@@ -87,19 +87,19 @@ func sout(v ...interface{}) string {
 
 // -----------------------------------------
 
-// Print calls Output to print to the standard output.
+// Print calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Print.
 func Print(v ...interface{}) {
 	Std.Output(levelInfo, 2, sout(v...))
 }
 
-// Printf calls Output to print to the standard output.
+// Printf calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Printf.
 func Printf(format string, v ...interface{}) {
 	Std.Output(levelInfo, 2, fmt.Sprintf(format, v...))
 }
 
-// Println calls Output to print to the standard output.
+// Println calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Println.
 func Println(v ...interface{}) {
 	Std.Output(levelInfo, 2, fmt.Sprintln(v...))

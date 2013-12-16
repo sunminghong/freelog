@@ -16,17 +16,6 @@ import (
     "time"
 )
 
-type GetAdapter func() ILogger
-var registeredAdapters map[string]GetAdapter
-
-
-
-type IOutput interface {
-	Init(channelLength int64,reader IConfigReader)
-	AddLogger(name string, reader IConfigReader) error
-    WriteLog(t *time.Time, level int, msg []byte)
-}
-
 type IConfigReader interface {
     Init(file *string) error
     InitBytes(conf []byte) error
@@ -34,15 +23,23 @@ type IConfigReader interface {
     GetBool(adapterName string, option string) (value bool, err error)
     GetFloat64(adapterName string, option string) (value float64, err error)
     GetString(adaterName string, option string) (value string, err error)
-
 }
 
-type ILogger interface {
+type IWriter interface {
+	Init(channelLength int64,reader IConfigReader)
+	AddLogger(name string, reader IConfigReader) error
+    WriteLog(t *time.Time, level int, msg []byte)
+}
+
+type IAdapter interface {
     GetLevel() (level int)
     Init(config IConfigReader) (level int, err error)
     Write(msg *LogMsg) (err error)
     Close()
 }
+
+type GetAdapter func() IAdapter
+var registeredAdapters map[string]GetAdapter = make(map[string]GetAdapter)
 
 
 type LogMsg struct {

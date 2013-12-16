@@ -20,7 +20,11 @@ import (
     "fmt"
 )
 
-type FileLogger struct {
+const (
+	AdapterFile    = "fileadapter"
+)
+
+type FileAdapter struct {
     mwFile    *MutexWriter
     level     int
     filename  string
@@ -39,11 +43,11 @@ type MutexWriter struct {
 }
 
 func init() {
-    RegisterAdapter(AdapterFile, NewFileLogger)
+    RegisterAdapter(AdapterFile, NewFileAdapter)
 }
 
-func NewFileLogger() ILogger {
-    flog := new(FileLogger)
+func NewFileAdapter() IAdapter {
+    flog := new(FileAdapter)
     flog.level = levelInfo
     flog.filename = ""
     flog.mwFile = new(MutexWriter)
@@ -65,11 +69,11 @@ func (this *MutexWriter) SetFile(file *os.File) {
     this.file = file
 }
 
-func (this *FileLogger) GetLevel() (level int) {
+func (this *FileAdapter) GetLevel() (level int) {
     return this.level
 }
 
-func (this *FileLogger) Init(ini IConfigReader) (level int, err error) {
+func (this *FileAdapter) Init(ini IConfigReader) (level int, err error) {
 
     logfile, err := ini.GetString(AdapterFile, "filename")
     if err != nil {
@@ -80,7 +84,7 @@ func (this *FileLogger) Init(ini IConfigReader) (level int, err error) {
     if strings.Contains(logfile, "%") {
         ////f ="20060102-150405"
         //f := "2006010215"
-        logfile = strings.Replace(logfile, "%y", "2006", -1)
+        logfile = strings.Replace(logfile, "%y", "06", -1)
         logfile = strings.Replace(logfile, "%m", "01", -1)
         logfile = strings.Replace(logfile, "%d", "02", -1)
 
@@ -117,7 +121,7 @@ func (this *FileLogger) Init(ini IConfigReader) (level int, err error) {
     return this.level, nil
 }
 
-func (this *FileLogger) Write(msg *LogMsg) (err error) {
+func (this *FileAdapter) Write(msg *LogMsg) (err error) {
     if this.level > msg.Level {
         return nil
     }
@@ -136,12 +140,12 @@ func (this *FileLogger) Write(msg *LogMsg) (err error) {
     return nil
 }
 
-func (this *FileLogger) createLlogFile() (*os.File, error) {
+func (this *FileAdapter) createLlogFile() (*os.File, error) {
     return os.OpenFile(
         this.filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
 }
 
-func (this *FileLogger) initFile() error {
+func (this *FileAdapter) initFile() error {
     file, err := this.createLlogFile()
     if err != nil {
         return err
@@ -159,11 +163,11 @@ func (this *FileLogger) initFile() error {
     return nil
 }
 
-func (this *FileLogger) getFileName(t *time.Time) string {
+func (this *FileAdapter) getFileName(t *time.Time) string {
     return t.Local().Format(this.fileFormat)
 }
 
-func (this *FileLogger) checkLogFile(t *time.Time) {
+func (this *FileAdapter) checkLogFile(t *time.Time) {
     reInit := false
     if this.nowSize >= this.maxSize {
         reInit = true
@@ -201,6 +205,6 @@ func (this *FileLogger) checkLogFile(t *time.Time) {
     }
 }
 
-func (this *FileLogger) Close() {
+func (this *FileAdapter) Close() {
     this.mwFile.file.Close()
 }
