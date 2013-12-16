@@ -49,14 +49,14 @@ filesize = 20
 //////////////////////////////////////////////////////////////////////////
 /*
     for i := 0;i< 10;i ++ {
-        log(levelFatal,[]byte(fmt.Sprintf("%d",i)))
-        log(levelTrace,[]byte("Trace\n"))
-        log(levelDebug,[]byte("Debug\n"))
-        log(levelInfo,[]byte("Info\n"))
-        log(levelWarn,[]byte("Warn\n"))
-        log(levelError,[]byte("Error\n"))
-        log(levelPanic,[]byte("Panic\n"))
-        log(levelFatal,[]byte("Fatal\n"))
+        log(LevelFatal,[]byte(fmt.Sprintf("%d",i)))
+        log(LevelTrace,[]byte("Trace\n"))
+        log(LevelDebug,[]byte("Debug\n"))
+        log(LevelInfo,[]byte("Info\n"))
+        log(LevelWarn,[]byte("Warn\n"))
+        log(LevelError,[]byte("Error\n"))
+        log(LevelPanic,[]byte("Panic\n"))
+        log(LevelFatal,[]byte("Fatal\n"))
     }
     time.Sleep(1 * time.Second)
 
@@ -97,7 +97,7 @@ filesize = 20
     }
     time.Sleep(1 * time.Second)
 
-    writer.SetLevel(AdapterFile,levelError)
+    writer.SetLevel(AdapterFile,LevelError)
 
     //Info("trace")
     for i := 0;i < 1;i ++ {

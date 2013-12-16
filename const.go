@@ -15,15 +15,15 @@ import (
 )
 
 const (
-	levelAll = iota
-	levelTrace
-	levelDebug
-	levelInfo
-	levelWarn
-	levelError
-    levelPanic
-	levelFatal
-	levelOff
+	LevelAll = iota
+	LevelTrace
+	LevelDebug
+	LevelInfo
+	LevelWarn
+	LevelError
+    LevelPanic
+	LevelFatal
+	LevelOff
 )
 
 func CheckAdapter(adaptername string) (string, error) {
@@ -42,33 +42,33 @@ func CheckLevel(level string) (int, error) {
 	case "ALL":
 		fallthrough
 	case "0":
-		return levelAll, nil
+		return LevelAll, nil
 	case "TRACE":
 		fallthrough
 	case "1":
-		return levelTrace, nil
+		return LevelTrace, nil
 	case "DEBUG":
 		fallthrough
 	case "2":
-		return levelDebug, nil
+		return LevelDebug, nil
 	case "INFO":
 		fallthrough
 	case "3":
-		return levelInfo, nil
+		return LevelInfo, nil
 	case "WARN":
 		fallthrough
 	case "4":
-		return levelWarn, nil
+		return LevelWarn, nil
 	case "ERROR":
 		fallthrough
 	case "5":
-		return levelError, nil
+		return LevelError, nil
 	case "FATAL":
 		fallthrough
 	case "6":
-		return levelFatal, nil
+		return LevelFatal, nil
 	default:
-		return levelOff, errors.New("日志等级无效！将采用最低等级！")
+		return LevelOff, errors.New("日志等级无效！将采用最低等级！")
 	}
 
 }

@@ -89,87 +89,87 @@ func sout(v ...interface{}) string {
 // Print calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Print.
 func Print(v ...interface{}) {
-	Std.Output(levelInfo, 2, sout(v...))
+	Std.Output(LevelInfo, 2, sout(v...))
 }
 
 // Printf calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Printf.
 func Printf(format string, v ...interface{}) {
-	Std.Output(levelInfo, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelInfo, 2, fmt.Sprintf(format, v...))
 }
 
 // Println calls Output to print to the standard writer.
 // Arguments are handled in the manner of fmt.Println.
 func Println(v ...interface{}) {
-	Std.Output(levelInfo, 2, fmt.Sprintln(v...))
+	Std.Output(LevelInfo, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func Tracef(format string, v ...interface{}) {
-	Std.Output(levelTrace, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelTrace, 2, fmt.Sprintf(format, v...))
 }
 
 func Trace(v ...interface{}) {
-	Std.Output(levelTrace, 2, sout(v...))
+	Std.Output(LevelTrace, 2, sout(v...))
 }
 
 
 // -----------------------------------------
 
 func Debugf(format string, v ...interface{}) {
-	Std.Output(levelDebug, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelDebug, 2, fmt.Sprintf(format, v...))
 }
 
 func Debug(v ...interface{}) {
-	Std.Output(levelDebug, 2, sout(v...))
+	Std.Output(LevelDebug, 2, sout(v...))
 }
 
 // -----------------------------------------
 
 func Infof(format string, v ...interface{}) {
-	Std.Output(levelInfo, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelInfo, 2, fmt.Sprintf(format, v...))
 }
 
 func Info(v ...interface{}) {
-	Std.Output(levelInfo, 2, sout(v...))
+	Std.Output(LevelInfo, 2, sout(v...))
 }
 
 // -----------------------------------------
 
 func Warnf(format string, v ...interface{}) {
-	Std.Output(levelWarn, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelWarn, 2, fmt.Sprintf(format, v...))
 }
 
-func Warn(v ...interface{}) { Std.Output(levelWarn, 2, sout(v...)) }
+func Warn(v ...interface{}) { Std.Output(LevelWarn, 2, sout(v...)) }
 
 // -----------------------------------------
 
 func Errorf(format string, v ...interface{}) {
-	Std.Output(levelError, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelError, 2, fmt.Sprintf(format, v...))
 }
 
 func Error(v ...interface{}) {
-    Std.Output(levelError, 2, sout(v...))
+    Std.Output(LevelError, 2, sout(v...))
 }
 
 // -----------------------------------------
 
 // Fatal is equivalent to Print() followed by a call to os.Exit(1).
 func Fatal(v ...interface{}) {
-	Std.Output(levelFatal, 2, sout(v...))
+	Std.Output(LevelFatal, 2, sout(v...))
 	os.Exit(1)
 }
 
 // Fatalf is equivalent to Printf() followed by a call to os.Exit(1).
 func Fatalf(format string, v ...interface{}) {
-	Std.Output(levelFatal, 2, fmt.Sprintf(format, v...))
+	Std.Output(LevelFatal, 2, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
 
 // Fatalln is equivalent to Println() followed by a call to os.Exit(1).
 func Fatalln(v ...interface{}) {
-	Std.Output(levelFatal, 2, fmt.Sprintln(v...))
+	Std.Output(LevelFatal, 2, fmt.Sprintln(v...))
 	os.Exit(1)
 }
 
@@ -178,21 +178,21 @@ func Fatalln(v ...interface{}) {
 // Panic is equivalent to Print() followed by a call to panic().
 func Panic(v ...interface{}) {
 	s := sout(v...)
-	Std.Output(levelPanic, 2, s)
+	Std.Output(LevelPanic, 2, s)
 	panic(s)
 }
 
 // Panicf is equivalent to Printf() followed by a call to panic().
 func Panicf(format string, v ...interface{}) {
 	s := fmt.Sprintf(format, v...)
-	Std.Output(levelPanic, 2, s)
+	Std.Output(LevelPanic, 2, s)
 	panic(s)
 }
 
 // Panicln is equivalent to Println() followed by a call to panic().
 func Panicln(v ...interface{}) {
 	s := fmt.Sprintln(v...)
-	Std.Output(levelPanic, 2, s)
+	Std.Output(LevelPanic, 2, s)
 	panic(s)
 }
 
@@ -205,7 +205,7 @@ func Stack(v ...interface{}) {
 	n := runtime.Stack(buf, true)
 	s += string(buf[:n])
 	s += "\n"
-	Std.Output(levelError, 2, s)
+	Std.Output(LevelError, 2, s)
 }
 
 func PrintPanicStack() {

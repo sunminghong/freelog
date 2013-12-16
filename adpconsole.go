@@ -33,7 +33,7 @@ func init() {
 func NewConsoleAdapter() IAdapter {
     clog := new(ConsoleAdapter)
     clog.section = AdapterConsole
-    clog.level = levelWarn
+    clog.level = LevelWarn
     return clog
 }
 
@@ -48,7 +48,7 @@ func (this *ConsoleAdapter) SetLevel(level int) {
 func (this *ConsoleAdapter) Init(ini IConfigReader) (level int, err error) {
     lev, err := ini.GetString(this.section, "level")
     if err != nil {
-        this.level = levelWarn
+        this.level = LevelWarn
     } else {
         this.level, err = CheckLevel(lev)
     }

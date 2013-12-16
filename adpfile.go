@@ -48,7 +48,7 @@ func init() {
 
 func NewFileAdapter() IAdapter {
     flog := new(FileAdapter)
-    flog.level = levelInfo
+    flog.level = LevelInfo
     flog.filename = ""
     flog.mwFile = new(MutexWriter)
     return flog
@@ -116,7 +116,7 @@ func (this *FileAdapter) Init(ini IConfigReader) (level int, err error) {
 
     lev, err := ini.GetString(AdapterFile, "level")
     if err != nil {
-        this.level = levelWarn
+        this.level = LevelWarn
     } else {
         this.level, err = CheckLevel(lev)
     }

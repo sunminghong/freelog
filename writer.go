@@ -28,7 +28,7 @@ type freeWriter struct {
 func (this *freeWriter) Init(channelLength int64, configReader IConfigReader) {
     this.registeredAdapters = make(map[string]IAdapter)
     this.msgChannel = make(chan *LogMsg, channelLength)
-    this.lowestLevel = levelOff
+    this.lowestLevel = LevelOff
 
     this.setAdapters(configReader)
 
@@ -85,7 +85,7 @@ func (this *freeWriter) AddAdapter(
         fmt.Printf("日志输出器初始化失败：%q,%v \n", adpName, err)
         return err
     }
-    if level == levelOff {
+    if level == LevelOff {
         return nil
     }
 

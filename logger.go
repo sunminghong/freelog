@@ -156,9 +156,9 @@ func (l *LoggerExt) Output(lvl int, calldepth int, s string) {
     l.formatHeader(&now, lvl, sreqId)
 
     var n int
-    if lvl == levelWarn {
+    if lvl == LevelWarn {
         n = 1
-    } else if lvl > levelWarn {
+    } else if lvl > LevelWarn {
         n = 3
     }
 
@@ -259,77 +259,77 @@ func (l *LoggerExt) SetOutputLevel(lvl int) {
 // Printf calls l.Output to print to the logger.
 // Arguments are handled in the manner of fmt.Printf.
 func (l *LoggerExt) Printf(format string, v ...interface{}) {
-	l.Output(levelInfo, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelInfo, 2, fmt.Sprintf(format, v...))
 }
 
 // Print calls l.Output to print to the logger.
 // Arguments are handled in the manner of fmt.Print.
 func (l *LoggerExt) Print(v ...interface{}) {
-    l.Output(levelInfo, 2, fmt.Sprint(v...))
+    l.Output(LevelInfo, 2, fmt.Sprint(v...))
 }
 
 // Println calls l.Output to print to the logger.
 // Arguments are handled in the manner of fmt.Println.
 func (l *LoggerExt) Println(v ...interface{}) {
-    l.Output(levelInfo, 2, fmt.Sprintln(v...))
+    l.Output(LevelInfo, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func (l *LoggerExt) Debugf(format string, v ...interface{}) {
-	l.Output(levelDebug, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelDebug, 2, fmt.Sprintf(format, v...))
 }
 
 func (l *LoggerExt) Debug(v ...interface{}) {
-	l.Output(levelDebug, 2, fmt.Sprintln(v...))
+	l.Output(LevelDebug, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func (l *LoggerExt) Infof(format string, v ...interface{}) {
-	l.Output(levelInfo, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelInfo, 2, fmt.Sprintf(format, v...))
 }
 
 func (l *LoggerExt) Info(v ...interface{}) {
-	l.Output(levelInfo, 2, fmt.Sprintln(v...))
+	l.Output(LevelInfo, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func (l *LoggerExt) Warnf(format string, v ...interface{}) {
-	l.Output(levelWarn, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelWarn, 2, fmt.Sprintf(format, v...))
 }
 
 func (l *LoggerExt) Warn(v ...interface{}) {
-    l.Output(levelWarn, 2, fmt.Sprintln(v...))
+    l.Output(LevelWarn, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func (l *LoggerExt) Errorf(format string, v ...interface{}) {
-	l.Output(levelError, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelError, 2, fmt.Sprintf(format, v...))
 }
 
 func (l *LoggerExt) Error(v ...interface{}) {
-    l.Output(levelError, 2, fmt.Sprintln(v...))
+    l.Output(LevelError, 2, fmt.Sprintln(v...))
 }
 
 // -----------------------------------------
 
 func (l *LoggerExt) Fatal(v ...interface{}) {
-	l.Output(levelFatal, 2, fmt.Sprint(v...))
+	l.Output(LevelFatal, 2, fmt.Sprint(v...))
 	os.Exit(1)
 }
 
 // Fatalf is equivalent to l.Printf() followed by a call to os.Exit(1).
 func (l *LoggerExt) Fatalf(format string, v ...interface{}) {
-	l.Output(levelFatal, 2, fmt.Sprintf(format, v...))
+	l.Output(LevelFatal, 2, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
 
 // Fatalln is equivalent to l.Println() followed by a call to os.Exit(1).
 func (l *LoggerExt) Fatalln(v ...interface{}) {
-	l.Output(levelFatal, 2, fmt.Sprintln(v...))
+	l.Output(LevelFatal, 2, fmt.Sprintln(v...))
 	os.Exit(1)
 }
 
@@ -338,21 +338,21 @@ func (l *LoggerExt) Fatalln(v ...interface{}) {
 // Panic is equivalent to l.Print() followed by a call to panic().
 func (l *LoggerExt) Panic(v ...interface{}) {
 	s := fmt.Sprint(v...)
-	l.Output(levelPanic, 2, s)
+	l.Output(LevelPanic, 2, s)
 	panic(s)
 }
 
 // Panicf is equivalent to l.Printf() followed by a call to panic().
 func (l *LoggerExt) Panicf(format string, v ...interface{}) {
 	s := fmt.Sprintf(format, v...)
-	l.Output(levelPanic, 2, s)
+	l.Output(LevelPanic, 2, s)
 	panic(s)
 }
 
 // Panicln is equivalent to l.Println() followed by a call to panic().
 func (l *LoggerExt) Panicln(v ...interface{}) {
 	s := fmt.Sprintln(v...)
-	l.Output(levelPanic, 2, s)
+	l.Output(LevelPanic, 2, s)
 	panic(s)
 }
 */
