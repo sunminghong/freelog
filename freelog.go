@@ -23,10 +23,8 @@ var Std *LoggerExt
 var writer IWriter
 
 func init() {
-
-    fmt.Println("logger ")
-    //file := "./logconfig.ini"
-	//Reload(&file)
+    file := "./log.conf"
+	Start(&file)
 }
 
 func Start(inifile *string) {
