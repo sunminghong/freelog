@@ -39,6 +39,9 @@ func (ini *iniReader) InitBytes(inibytes []byte) error {
 
 func (ini *iniReader) GetAdapters() (adapterNames []string) {
     adapterNames = ini.c.GetSections()
+    if adapterNames[0] == "default" {
+        adapterNames = adapterNames[1:]
+    }
     return
 }
 

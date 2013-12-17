@@ -112,6 +112,8 @@ filesize = 20
         //Fatal("Fatal")
     }
 
+    defer PrintPanicStack()
+    panic("safsafasf")
 
     time.Sleep(1 * time.Second)
 }

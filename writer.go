@@ -20,9 +20,11 @@ import (
 
 type freeWriter struct {
     registeredAdapters map[string]IAdapter
-    lowestLevel       int
-    msgChannel        chan *LogMsg
-    lock              sync.Mutex
+    lowestLevel        int
+    msgChannel         chan *LogMsg
+    lock               sync.Mutex
+
+    running            bool
 }
 
 func (this *freeWriter) Init(channelLength int64, configReader IConfigReader) {
@@ -38,29 +40,28 @@ func (this *freeWriter) Init(channelLength int64, configReader IConfigReader) {
 func (this *freeWriter) setAdapters(configReader IConfigReader) {
     adps := configReader.GetAdapters()
     if adps == nil {
-        panic("logger config reader error!")
+        fmt.Println("logger config reader error!")
+        return
     }
 
     for _, adp := range adps {
         if adp, err := CheckAdapter(adp); err == nil {
             this.AddAdapter(adp, configReader)
         } else {
-            fmt.Printf("日志适配器没有注册：%q \n", adp)
+            fmt.Println("日志适配器没有注册：%q \n", adp)
         }
     }
-
-    return
 }
 
 func (this *freeWriter) SetLevel(name string, level int) {
-    adp,ok := this.registeredAdapters[name]
+    adp, ok := this.registeredAdapters[name]
     if !ok {
         return
     }
 
     adp.SetLevel(level)
 
-    for _,adp := range this.registeredAdapters {
+    for _, adp := range this.registeredAdapters {
         if this.lowestLevel > adp.GetLevel() {
             this.lowestLevel = level
         }
@@ -104,7 +105,7 @@ func (this *freeWriter) WriteLog(t *time.Time, level int, msg []byte) {
     }
 
     bufs := make([]byte, len(msg))
-    copy(bufs,msg)
+    copy(bufs, msg)
 
     logmsg := new(LogMsg)
     logmsg.Timestamp = t
@@ -122,6 +123,9 @@ func (this *freeWriter) Close() {
 }
 
 func (this *freeWriter) runLog() {
+    if this.running {
+        return
+    }
     for {
         select {
         case logmsg := <-this.msgChannel:
